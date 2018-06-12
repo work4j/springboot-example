@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.2//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.work4j.example.dao.UserDao">
+
+    <!-- 查询 User -->
+    <select id="find" parameterType="com.work4j.example.domain.query.UserQuery"
+            resultType="com.work4j.example.domain.vo.User">
+        SELECT * FROM user_t
+        <where>
+            <if test="username != null and username != ''">
+                AND username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                AND password = #{password}
+            </if>
+            <if test="enabled != null and enabled != ''">
+                AND enabled = #{enabled}
+            </if>
+            <if test="simpleQueryParam != null and simpleQueryParam != ''">
+                AND nickname LIKE CONCAT('%',#{simpleQueryParam},'%')
+            </if>
+        </where>
+        ORDER BY create_data_time
+    </select>
+
+    <!-- 通过id得到一个 User-->
+    <select id="get" parameterType="string" resultType="com.work4j.example.domain.vo.User">
+        SELECT * FROM user_t WHERE id = #{id}
+    </select>
+
+    <!-- 新增 User -->
+    <insert id="add" parameterType="com.work4j.example.domain.form.UserForm">
+        INSERT INTO user_t (
+            id, username, password, nickname, email, cellphone, create_data_time, create_data_username, update_data_time, update_data_username, enabled
+        )
+        VALUES(
+            #{id}, #{username}, #{password}, #{nickname}, #{email}, #{cellphone}, #{createDataTime}, #{createDataUsername}, #{updateDataTime}, #{updateDataUsername}, #{enabled}
+        )
+    </insert>
+
+    <!-- 修改 User -->
+    <update id="update" parameterType="com.work4j.example.domain.form.UserForm">
+        UPDATE user_t SET
+            password = #{password},
+            nickname = #{nickname},
+            email = #{email},
+            cellphone = #{cellphone},
+            update_data_time = #{updateDataTime},
+            update_data_username = #{updateDataUsername}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个 User -->
+    <delete id="delete" parameterType="string">
+        DELETE FROM user_t WHERE id = #{id}
+    </delete>
+
+    <!-- 修改状态-->
+    <update id="changeEnabled">
+        UPDATE user_t SET enabled=#{enabled} WHERE id = #{id}
+    </update>
+</mapper>
